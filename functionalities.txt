@@ -1,0 +1,6 @@
+Task it is a task mangement application with the below functionalities
+1. Login and logout functionalities
+2. Admin dashboard
+    a. CRUD user
+3. CRUD tasks
+4. Security layer
