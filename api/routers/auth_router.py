@@ -30,6 +30,6 @@ async def login(form:Annotated[OAuth2PasswordRequestForm,Depends()],db:Session=D
         "access_token" : token,
         "token_type" : "bearer"
     })
-    response.set_cookie(key="user",value=user.user_name)
+    response.set_cookie(key="LOGIN_INFO",value=token)
     return response
     

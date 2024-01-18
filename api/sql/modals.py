@@ -3,14 +3,8 @@ from database.connection import Base
 from enum import Enum
 from datetime import datetime
 
-class Users(Base):
-    __tablename__="Users"
-    id:int = Column(Integer,primary_key=True,autoincrement=True,index=True)
-    user_name:str = Column(String,unique=True,index=True)
-    first_name:str = Column(String)
-    last_name:str = Column(String)
-    email:str = Column(String,unique=True)
-    password:str = Column(String)
+class User(Base):
+    __tablename__="users"
     
     class UserFields(Enum):
         first_name = "First Name"
@@ -18,6 +12,14 @@ class Users(Base):
         email = "Email"
         password = "Password"
         user_name = "User Name"
+        
+    id:int = Column(Integer,primary_key=True,autoincrement=True,index=True)
+    user_name:str = Column(String,unique=True,index=True)
+    first_name:str = Column(String)
+    last_name:str = Column(String)
+    email:str = Column(String,unique=True)
+    password:str = Column(String)
+    
 
 class Task(Base):
     __tablename__ = 'tasks'
@@ -35,18 +37,18 @@ class Task(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=False)
     description = Column(String[50])
-    status = Column(String, default=TaskStatus.not_started)
-    priority = Column(String, default=TaskPriority.low)
+    status = Column(String, default=TaskStatus.not_started.value)
+    priority = Column(String, default=TaskPriority.low.value)
     due_date = Column(DateTime)
     assigned_to = Column(String)
     
     created_by = Column(String)
     created_date = Column(DateTime, default=datetime.utcnow)
-    last_modified_by = Column(String)
-    last_modified_date = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # last_modified_by = Column(String)
+    # last_modified_date = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    tags = Column(String)
-    completed_date = Column(DateTime)
+    # tags = Column(String)
+    # completed_date = Column(DateTime)
 
 
         

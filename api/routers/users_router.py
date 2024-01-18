@@ -5,14 +5,13 @@ from database.connection import get_database,Session
 from crud import users_crud
 from tags import Tags
 from typing import List
+from typing import Annotated
 from auth.token_management import verify_token,decode_token
 from sql import modals
-from typing import Annotated
 
 router = APIRouter(
     prefix="/users",
     tags= [Tags.user],
-    dependencies=[Depends(verify_token)],
     responses={
         403 : {"Error":"Authentication Error"},
         500 : {"Error":"Internal server Error"},
@@ -62,7 +61,7 @@ async def get_all_users(db:Session=Depends(get_database)):
         )
 
 @router.patch("/update",response_model=users_scheme.UserDetails)
-async def update(user_name:str,field:modals.Users.UserFields,value:str,db:Session=Depends(get_database)):
+async def update(user_name:str,field:modals.User.UserFields,value:str,db:Session=Depends(get_database)):
     try:
         return await users_crud.update_field(user_name,field,value,db)
     except Exception as e:

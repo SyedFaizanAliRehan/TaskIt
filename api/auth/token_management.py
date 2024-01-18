@@ -1,11 +1,12 @@
 from jose import jwt,JWTError
-from fastapi import Depends,HTTPException,status
+from fastapi import Depends,HTTPException,status,Cookie
 from time import time
 from decouple import config
 from fastapi.security import OAuth2PasswordBearer
 from database.connection import get_database,Session
 from typing import Annotated
 from crud import users_crud
+from sql import modals
 
 # Token creation
 async def create_token(data:dict,expiration_time_mins:int|None = None)->str:
@@ -31,11 +32,9 @@ async def decode_token(token:str)->dict:
     except JWTError:
         raise error
 
-oauth2_shceme = OAuth2PasswordBearer(tokenUrl="login")
+
 # Token Verification
-async def verify_token(
-    token:Annotated[str,Depends(oauth2_shceme)],
-    db:Session = Depends(get_database)) -> bool:
+async def verification(token:str,db:Session):
     decoded = await decode_token(token=token)
     user = await users_crud.find_user_by_username(decoded.get("user"),db=db)
     if user is None:
@@ -51,3 +50,27 @@ async def verify_token(
         headers={"WWW-Authenticate": "Bearer"},
     )
     return True
+
+oauth2_shceme = OAuth2PasswordBearer(tokenUrl="login")
+async def verify_token(
+    token:Annotated[str,Depends(oauth2_shceme)],
+    db:Session = Depends(get_database)) -> bool:
+    return await verification(token,db)
+
+async def get_active_user(
+    LOGIN_INFO:Annotated[str,Cookie()]=None,
+    db:Session = Depends(get_database)
+    ) -> modals.User:
+    error = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="User is not logged in!",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    if LOGIN_INFO is None:
+        raise error
+    elif await verification(token=LOGIN_INFO,db=db) == True:
+        decoded = await decode_token(token=LOGIN_INFO)
+        user = await users_crud.find_user_by_username(decoded.get("user"),db=db)
+        return user
+    else:
+        raise error
