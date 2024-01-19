@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from database.connection import get_database,Session
 from typing import Annotated
 from crud import users_crud
-from sql import modals
+from schemes import users_scheme
 
 # Token creation
 async def create_token(data:dict,expiration_time_mins:int|None = None)->str:
@@ -58,19 +58,25 @@ async def verify_token(
     return await verification(token,db)
 
 async def get_active_user(
-    LOGIN_INFO:Annotated[str,Cookie()]=None,
+    token:Annotated[str,Cookie(alias="LOGIN_INFO")]=None,
     db:Session = Depends(get_database)
-    ) -> modals.User:
+    ) -> users_scheme.UserDetails:
     error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="User is not logged in!",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    if LOGIN_INFO is None:
+    if token is None:
         raise error
-    elif await verification(token=LOGIN_INFO,db=db) == True:
-        decoded = await decode_token(token=LOGIN_INFO)
+    elif await verification(token=token,db=db) == True:
+        decoded = await decode_token(token=token)
         user = await users_crud.find_user_by_username(decoded.get("user"),db=db)
-        return user
+        return users_scheme.UserDetails(
+            id = user.id,
+            user_name = user.user_name,
+            email = user.email,
+            first_name = user.first_name,
+            last_name = user.last_name
+            )
     else:
         raise error

@@ -21,7 +21,7 @@ class User(Base):
     last_name:Mapped[str] = mapped_column(String(10))
     email:Mapped[str] = mapped_column(String(25),unique=True,index=True)
     password:Mapped[str] = mapped_column(String(15))
-    created_tasks:Mapped[List["Task"]] = relationship("Task",back_populates="created_by_user")
+    created_tasks:Mapped[List["Task"]] = relationship(back_populates="created_by_user")
     
 
 class Task(Base):
@@ -49,7 +49,7 @@ class Task(Base):
     created_by:Mapped[int] = mapped_column(ForeignKey("users.id"))
     created_date:Mapped[datetime] = mapped_column(default=datetime.utcnow())
     
-    created_by_user = relationship("User",back_populates="created_tasks")
+    created_by_user:Mapped["User"] = relationship(back_populates="created_tasks")
     
     
     # last_modified_by = Column(String)
