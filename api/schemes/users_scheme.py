@@ -1,4 +1,6 @@
 from pydantic import Field,EmailStr,BaseModel
+from typing import List
+from . import tasks_scheme
 
 class User(BaseModel):
     id:int = Field(title="User ID",description="This is the user's ID",ge=0,exclude=True)
@@ -8,6 +10,10 @@ class User(BaseModel):
 class UserDetails(User):
     first_name:str = Field(title="First Name",description="This is the first name of the user",max_length=25)
     last_name:str = Field(title="Last Name",description="This is the last name of the user",max_length=25)
+    created_tasks:List[tasks_scheme.TasksUpdate]=[]
+    
+    class Config:
+        form_attributes = True
 
 class UserCreate(UserDetails):
     password:str = Field(title="Password",description="This is the password of the user",max_length=15,min_length=5)

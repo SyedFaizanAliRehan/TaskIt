@@ -17,11 +17,13 @@ class User(Base):
         
     id:Mapped[int] = mapped_column(primary_key=True,autoincrement=True,index=True)
     user_name:Mapped[str] = mapped_column(String(10),unique=True,index=True)
+    email:Mapped[str] = mapped_column(String(25),unique=True,index=True)
+    
     first_name:Mapped[str] = mapped_column(String(10))
     last_name:Mapped[str] = mapped_column(String(10))
-    email:Mapped[str] = mapped_column(String(25),unique=True,index=True)
-    password:Mapped[str] = mapped_column(String(15))
     created_tasks:Mapped[List["Task"]] = relationship(back_populates="created_by_user")
+    
+    password:Mapped[str] = mapped_column(String(15))
     
 
 class Task(Base):
@@ -36,15 +38,23 @@ class Task(Base):
         low = "Low"
         medium = "Medium"
         high = "High"
+    
+    class TaskFields(Enum):
+        title = "Title"
+        description = "Description"
+        status = "Status"
+        priority = "Priority"
+        due_date = "Due Date"
+        assigned_to = "Assigned To"
 
     id:Mapped[int] = mapped_column(primary_key=True,autoincrement=True,index=True)
     title:Mapped[str] = mapped_column(String(30))
-    description:Mapped[str] = mapped_column(String(60))
-    status:Mapped[TaskStatus] = mapped_column(String(30),default=TaskStatus.not_started)
-    priority:Mapped[TaskPriority] = mapped_column(String(30),default=TaskPriority.low)
+    description:Mapped[str|None] = mapped_column(String(60))
+    status:Mapped[str] = mapped_column(String(30),default=TaskStatus.not_started)
+    priority:Mapped[str] = mapped_column(String(30),default=TaskPriority.low)
     
     due_date:Mapped[datetime|None] = mapped_column(String(30),default=None)
-    assigned_to:Mapped[int] = mapped_column()
+    assigned_to:Mapped[int|None] = mapped_column(default=None)
     
     created_by:Mapped[int] = mapped_column(ForeignKey("users.id"))
     created_date:Mapped[datetime] = mapped_column(default=datetime.utcnow())

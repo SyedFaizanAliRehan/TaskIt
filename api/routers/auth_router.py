@@ -12,16 +12,17 @@ router = APIRouter(tags=[Tags.login])
 
 @router.post('/login')
 async def login(form:Annotated[OAuth2PasswordRequestForm,Depends()],db:Session=Depends(get_database)):
-    error = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Incorrect username or password",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     user = await users_crud.find_user_by_username(form.username,db)
     if user is None:
-        raise error
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid Username!!"
+        )
     if await verify_password(form.password,user.password) == False:
-        raise error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Password!!"
+        )
     payload = {
         "user" : user.user_name
     }
@@ -30,6 +31,16 @@ async def login(form:Annotated[OAuth2PasswordRequestForm,Depends()],db:Session=D
         "access_token" : token,
         "token_type" : "bearer"
     })
-    response.set_cookie(key="LOGIN_INFO",value=token)
     return response
-    
+
+
+@router.post('/logout',dependencies=[])
+async def logout():
+    response = JSONResponse({"message": "Logout successful"})
+    try:
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"{e}"
+        )

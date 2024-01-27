@@ -1,12 +1,11 @@
 from jose import jwt,JWTError
-from fastapi import Depends,HTTPException,status,Cookie
+from fastapi import Depends,HTTPException,status
 from time import time
 from decouple import config
-from fastapi.security import OAuth2PasswordBearer
 from database.connection import get_database,Session
-from typing import Annotated
 from crud import users_crud
 from schemes import users_scheme
+from fastapi.requests import Request
 
 # Token creation
 async def create_token(data:dict,expiration_time_mins:int|None = None)->str:
@@ -32,43 +31,33 @@ async def decode_token(token:str)->dict:
     except JWTError:
         raise error
 
+# Updating Token
+async def update_token(token:str)->str:
+    decoded = await decode_token(token=token)
+    if decoded.get("expiry") - time() < 300:
+        return await create_token(data=decoded)
+    return token
 
 # Token Verification
-async def verification(token:str,db:Session):
+async def verify_token(token:str,db:Session)->bool:
     decoded = await decode_token(token=token)
     user = await users_crud.find_user_by_username(decoded.get("user"),db=db)
     if user is None:
         raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Incorrect username or password",
+        detail="Unauthorised User",
         headers={"WWW-Authenticate": "Bearer"},
     )
     if time() > decoded.get("expiry"):
         raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Token has expired",
+        detail="Token has expired!!",
         headers={"WWW-Authenticate": "Bearer"},
     )
     return True
 
-oauth2_shceme = OAuth2PasswordBearer(tokenUrl="login")
-async def verify_token(
-    token:Annotated[str,Depends(oauth2_shceme)],
-    db:Session = Depends(get_database)) -> bool:
-    return await verification(token,db)
-
-async def get_active_user(
-    token:Annotated[str,Cookie(alias="LOGIN_INFO")]=None,
-    db:Session = Depends(get_database)
-    ) -> users_scheme.UserDetails:
-    error = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="User is not logged in!",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    if token is None:
-        raise error
-    elif await verification(token=token,db=db) == True:
+async def get_active_user_from_token(token:str,db:Session) -> users_scheme.UserDetails:
+    if await verify_token(token=token,db=db) == True:
         decoded = await decode_token(token=token)
         user = await users_crud.find_user_by_username(decoded.get("user"),db=db)
         return users_scheme.UserDetails(
@@ -79,4 +68,17 @@ async def get_active_user(
             last_name = user.last_name
             )
     else:
-        raise error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+async def get_token_from_header(request:Request)->str:
+    return request.headers.get("Authorization").split(" ")[1]
+
+async def get_active_user_from_header(token:str=Depends(get_token_from_header),db:Session=Depends(get_database))->users_scheme.UserDetails:
+    return await get_active_user_from_token(token=token,db=db)
+
+    
+
