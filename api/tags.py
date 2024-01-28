@@ -4,6 +4,6 @@ class Tags(Enum):
     root = "Root"
     admin = "Admin"
     user = "User"
-    login = "Sign Up"
+    login = "Login/Sign In"
     tasks = "Tasks"
     
