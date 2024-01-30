@@ -1,11 +1,13 @@
 from pydantic import Field,EmailStr,BaseModel
 from typing import List
 from . import tasks_scheme
+from sql import modals
 
 class User(BaseModel):
     id:int = Field(title="User ID",description="This is the user's ID",ge=0,exclude=True)
     user_name:str = Field(title="User Name",description="This is the user's name",max_length=25,min_length=5)
     email:EmailStr = Field(title="Email",description="This is the Email of the user",max_length=25)
+    role:str = Field(title="Role of the user",default=modals.User.UserRoles.read_only)
 
 class UserDetails(User):
     first_name:str = Field(title="First Name",description="This is the first name of the user",max_length=25)
@@ -23,6 +25,7 @@ class UserCreate(UserDetails):
                 {
                     "id":0,
                     "user_name":"johndoe",
+                    "role": modals.User.UserRoles.read_only.value,
                     "first_name":"John",
                     "last_name":"Doe",
                     "email":"johndoe@taskit.com",

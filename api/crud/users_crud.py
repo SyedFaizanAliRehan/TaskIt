@@ -6,7 +6,6 @@ from auth.password_management import get_hashed_password
 from typing import List
 from fastapi import HTTPException,status
 
-
 async def find_user_is_unique(user_name:str,user_email:str,db:Session)->bool:
     return db.query(modals.User).filter(
         modals.User.user_name == user_name
@@ -27,6 +26,7 @@ async def create_user(user:users_scheme.UserCreate,db:Session)->modals.User|None
             user_name = user.user_name,
             first_name = user.first_name,
             last_name = user.last_name,
+            role = modals.User.UserRoles(user.role),
             email = user.email,
             password = await get_hashed_password(user.password)
             )
