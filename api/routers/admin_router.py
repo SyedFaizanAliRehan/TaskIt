@@ -22,7 +22,6 @@ access_roles=[modals.User.UserRoles.admin]
 @router.post('/users/create',response_model=users_scheme.User,status_code=status.HTTP_201_CREATED)
 @role_access_controller(roles = access_roles)
 async def create_user(user:users_scheme.UserCreate,active_user:users_scheme.UserDetails=Depends(get_active_user_from_header),db:Session=Depends(get_database)):
-    print(user)
     return jsonable_encoder(await users_crud.create_user(user,db))
 
 @router.get("/users/all",response_model=List[users_scheme.User],status_code=status.HTTP_200_OK)
