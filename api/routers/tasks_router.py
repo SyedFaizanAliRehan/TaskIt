@@ -9,6 +9,7 @@ from typing import Annotated,List
 from sql import modals
 from auth.auth_schemes import credential_authentication
 from fastapi.encoders import jsonable_encoder
+from dependency.access_control import role_access_controller
 
 router = APIRouter(
     prefix="/tasks",
@@ -18,6 +19,7 @@ router = APIRouter(
 
 # Create
 @router.post("/create",response_model=tasks_scheme.TasksUpdate,status_code=status.HTTP_201_CREATED)
+@role_access_controller(roles = [modals.User.UserRoles.read_write,modals.User.UserRoles.admin])
 async def create_tasks(
     title:Annotated[str,Form()],
     desc:Annotated[str|None,Form()]=None,
@@ -39,15 +41,18 @@ async def create_tasks(
 
 # Retreval
 @router.get("/all",response_model=List[tasks_scheme.TasksUpdate],status_code=status.HTTP_200_OK)
+@role_access_controller(roles = [modals.User.UserRoles.read_write,modals.User.UserRoles.read_only,modals.User.UserRoles.admin])
 async def get_all_tasks(active_user:users_scheme.UserDetails=Depends(get_active_user_from_header),db:Session=Depends(get_database)):
     return jsonable_encoder(await tasks_crud.get_created_tasks(active_user,db))
 
 @router.get("/{task_id}",response_model=tasks_scheme.TasksUpdate,status_code=status.HTTP_200_OK)
+@role_access_controller(roles = [modals.User.UserRoles.read_write,modals.User.UserRoles.read_only,modals.User.UserRoles.admin])
 async def get_tasks_by_task_id(task_id:int,active_user:users_scheme.UserDetails=Depends(get_active_user_from_header),db:Session=Depends(get_database)):
     return jsonable_encoder(await tasks_crud.get_created_tasks_by_task_id(task_id,active_user,db))
 
 # Update
 @router.put("/{task_id}",response_model=tasks_scheme.TasksUpdate|None,status_code=status.HTTP_202_ACCEPTED)
+@role_access_controller(roles = [modals.User.UserRoles.read_write,modals.User.UserRoles.admin])
 async def update_task(
     task_id:Annotated[int,Path()],
     field:Annotated[modals.Task.TaskFields,Form()],
@@ -59,6 +64,7 @@ async def update_task(
 
 #Delete
 @router.delete("/{task_id}",status_code=status.HTTP_202_ACCEPTED)
+@role_access_controller(roles = [modals.User.UserRoles.read_write,modals.User.UserRoles.admin])
 async def delete_task_by_task_id(task_id:int,active_user:users_scheme.UserDetails=Depends(get_active_user_from_header),db:Session=Depends(get_database)):
     return await tasks_crud.delete_task_by_task_id(task_id,db)
     
