@@ -1,14 +1,19 @@
-from sqlalchemy import String,ForeignKey
+from sqlalchemy import String,ForeignKey,Enum
 from sqlalchemy.orm import Mapped,mapped_column,relationship
 from database.connection import Base
-from enum import Enum
+import enum
 from datetime import datetime
 from typing import List
 
 class User(Base):
     __tablename__ = "users"
     
-    class UserFields(Enum):
+    class UserRoles(enum.Enum):
+        admin = "Admin"
+        read_only = "Read Only"
+        read_write = "Read Write"
+    
+    class UserFields(enum.Enum):
         first_name = "First Name"
         last_name = "Last Name"
         email = "Email"
@@ -18,6 +23,8 @@ class User(Base):
     id:Mapped[int] = mapped_column(primary_key=True,autoincrement=True,index=True)
     user_name:Mapped[str] = mapped_column(String(10),unique=True,index=True)
     email:Mapped[str] = mapped_column(String(25),unique=True,index=True)
+    role:Mapped[Enum] = mapped_column(Enum(UserRoles),default=UserRoles.read_only)
+    
     
     first_name:Mapped[str] = mapped_column(String(10))
     last_name:Mapped[str] = mapped_column(String(10))
@@ -29,17 +36,17 @@ class User(Base):
 class Task(Base):
     __tablename__ = 'tasks'
     
-    class TaskStatus(Enum):
+    class TaskStatus(enum.Enum):
         not_started = "Not Started"
         in_progress = "In Progress"
         closed = "Closed"
     
-    class TaskPriority(Enum):
+    class TaskPriority(enum.Enum):
         low = "Low"
         medium = "Medium"
         high = "High"
     
-    class TaskFields(Enum):
+    class TaskFields(enum.Enum):
         title = "Title"
         description = "Description"
         status = "Status"
@@ -50,8 +57,8 @@ class Task(Base):
     id:Mapped[int] = mapped_column(primary_key=True,autoincrement=True,index=True)
     title:Mapped[str] = mapped_column(String(30))
     description:Mapped[str|None] = mapped_column(String(60))
-    status:Mapped[str] = mapped_column(String(30),default=TaskStatus.not_started)
-    priority:Mapped[str] = mapped_column(String(30),default=TaskPriority.low)
+    status:Mapped[Enum] = mapped_column(Enum(TaskStatus),default=TaskStatus.not_started)
+    priority:Mapped[Enum] = mapped_column(Enum(TaskPriority),default=TaskPriority.low)
     
     due_date:Mapped[datetime|None] = mapped_column(String(30),default=None)
     assigned_to:Mapped[int|None] = mapped_column(default=None)

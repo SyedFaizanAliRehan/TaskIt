@@ -6,6 +6,7 @@ from database.connection import get_database,Session
 from crud import users_crud
 from schemes import users_scheme,token_scheme
 from fastapi.requests import Request
+from fastapi.encoders import jsonable_encoder
 
 # Token creation
 
@@ -73,7 +74,8 @@ async def get_active_user_from_token(token:str,db:Session) -> users_scheme.UserD
             user_name = user.user_name,
             email = user.email,
             first_name = user.first_name,
-            last_name = user.last_name
+            last_name = user.last_name,
+            role= user.role.value
             )
     else:
         raise HTTPException(

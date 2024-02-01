@@ -6,8 +6,8 @@ class TasksCreation(BaseModel):
     id:int = Field(title="Task ID",description="Unique ID for tasks",ge=0,exclude=True)
     title:str = Field(title="Title",description="Title of the task")
     description:str|None = Field(title="Title Desc",description="Description of the task")
-    status:str = Field(title="status",description="Status of the task",default=modals.Task.TaskStatus.not_started.value)
-    priority:str = Field(title="priority",description="Priority of the task",default=modals.Task.TaskPriority.low.value)
+    status:str = Field(title="status",description="Status of the task",default=modals.Task.TaskStatus.not_started)
+    priority:str = Field(title="priority",description="Priority of the task",default=modals.Task.TaskPriority.low)
 
     
 class TasksUpdate(TasksCreation):
