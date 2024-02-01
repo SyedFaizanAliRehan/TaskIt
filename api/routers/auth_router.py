@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends,HTTPException,status,Header
+from fastapi import APIRouter,Depends,HTTPException,status,Header,Form
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
@@ -7,11 +7,14 @@ from auth.password_management import verify_password
 from auth.token_management import create_token,verify_token,decode_token
 from crud import users_crud
 from tags import Tags
-from schemes import token_scheme
+from schemes import token_scheme,users_scheme
 from typing import Annotated
 from time import time
+from fastapi.encoders import jsonable_encoder
 
-router = APIRouter(tags=[Tags.login])
+router = APIRouter(
+    tags=[Tags.login]
+    )
 
 # Login
 @router.post('/login',response_model=token_scheme.Token)
@@ -45,6 +48,15 @@ async def reset_token(refresh_token:Annotated[str,Header(...,alias="refresh-toke
     token = await create_token(payload=payload)
     response = JSONResponse(content=token.model_dump(),status_code=status.HTTP_200_OK)
     return response
+
+@router.post('/signup',response_model=users_scheme.User,status_code=status.HTTP_201_CREATED)
+async def sign_up(user_name:Annotated[str,Form()],
+                  first_name:Annotated[str,Form()],
+                  last_name:Annotated[str,Form()],
+                  password:Annotated[str,Form()],
+                  email:Annotated[str,Form()],
+                  db:Session=Depends(get_database)):
+    return jsonable_encoder(await users_crud.sign_up(user_name,email,first_name,last_name,password,db))
 
 @router.post('/logout',dependencies=[])
 async def logout():

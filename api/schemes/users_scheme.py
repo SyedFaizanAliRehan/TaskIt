@@ -7,7 +7,7 @@ class User(BaseModel):
     id:int = Field(title="User ID",description="This is the user's ID",ge=0,exclude=True)
     user_name:str = Field(title="User Name",description="This is the user's name",max_length=25,min_length=5)
     email:EmailStr = Field(title="Email",description="This is the Email of the user",max_length=25)
-    role:str = Field(title="Role of the user",default=modals.User.UserRoles.read_only)
+    role:str = Field(title="Role of the user",default=modals.User.UserRoles.read_only,exclude=True)
 
 class UserDetails(User):
     first_name:str = Field(title="First Name",description="This is the first name of the user",max_length=25)

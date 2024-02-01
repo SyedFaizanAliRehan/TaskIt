@@ -1,4 +1,3 @@
-from fastapi import Depends
 from database.connection import Session
 from schemes import users_scheme
 from sql import modals
@@ -36,6 +35,34 @@ async def create_user(user:users_scheme.UserCreate,db:Session)->modals.User|None
             db.refresh(new_user)
             return new_user
         except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"{e.args}"
+            )
+#Signup
+async def sign_up(user_name:str,email:str|None,first_name:str,last_name:str,password:str,db:Session)->modals.User|None:
+    temp_flag = await find_user_is_unique(user_name,email,db)
+    if temp_flag == False:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"User with user_name {user_name} or email {email} already exist"
+        )
+    else:
+        new_user = modals.User(
+            user_name = user_name,
+            first_name = first_name,
+            last_name = last_name,
+            role = modals.User.UserRoles.read_write,
+            email = email,
+            password = await get_hashed_password(password)
+            )
+        try:
+            db.add(new_user)
+            db.commit()
+            db.refresh(new_user)
+            return new_user
+        except Exception as e:
+            db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"{e.args}"

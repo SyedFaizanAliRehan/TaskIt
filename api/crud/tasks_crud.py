@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from fastapi import status as status_code
 
 # Creation
-async def create_task(title:str,desc:str,status:modals.Task.TaskStatus,priority:modals.Task.TaskPriority,active_user:users_scheme.UserDetails,db:Session)->tasks_scheme.TasksUpdate:
+async def create_task(title:str,desc:str,status:modals.Task.TaskStatus,priority:modals.Task.TaskPriority,active_user:users_scheme.UserDetails,db:Session)->modals.Task:
     try:
         new_task = modals.Task(
             title=title,
@@ -23,41 +23,54 @@ async def create_task(title:str,desc:str,status:modals.Task.TaskStatus,priority:
         db.rollback()
         raise HTTPException(
             status_code=status_code.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"{e}"
+            detail=f"{e.args}"
         )
 
 # Retreval
-async def get_all_tasks(db:Session)->List[tasks_scheme.TasksUpdate]:
+async def get_all_tasks(db:Session)->List[modals.Task]:
     try:
         return db.query(modals.Task).all()
     except Exception as e:
         raise HTTPException(
             status_code=status_code.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"{e}"
+            detail=f"{e.args}"
         )
 
-async def get_tasks_created_by_user(user:users_scheme.UserDetails,db:Session)->List[tasks_scheme.TasksUpdate]:
+async def get_tasks_by_task_id(task_id:int,db:Session)->modals.Task:
+    try:
+        task = db.query(modals.Task).filter(
+            modals.Task.id == task_id).first()
+        return task
+    except Exception as e:
+        raise HTTPException(
+            status_code=status_code.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"{e} occured while fetching task with id {task_id}"
+        )
+        
+async def get_created_tasks(user:users_scheme.UserDetails,db:Session)->List[modals.Task]:
     try:
         return db.query(modals.Task).filter(
             modals.Task.created_by == user.id).all()
     except Exception as e:
         raise HTTPException(
             status_code=status_code.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"{e}"
+            detail=f"{e.args}"
         )
         
-async def get_tasks_by_task_id(task_id:int,db:Session)->tasks_scheme.TasksUpdate:
+async def get_created_tasks_by_task_id(task_id:int,user:users_scheme.UserDetails,db:Session)->modals.Task:
     try:
         return db.query(modals.Task).filter(
+            modals.Task.created_by == user.id
+            and
             modals.Task.id == task_id).first()
     except Exception as e:
         raise HTTPException(
             status_code=status_code.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"{e}"
+            detail=f"{e.args}"
         )
 
 # Update
-async def update_task(task_id:int,field:modals.Task.TaskFields,field_value:str,db:Session)->tasks_scheme.TasksUpdate:
+async def update_task(task_id:int,field:modals.Task.TaskFields,field_value:str,db:Session)->modals.Task:
     try:
         task = await get_tasks_by_task_id(task_id,db)
         setattr(task,field.name,field_value)
@@ -68,7 +81,7 @@ async def update_task(task_id:int,field:modals.Task.TaskFields,field_value:str,d
         db.rollback()
         raise HTTPException(
             status_code=status_code.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"{e}"
+            detail=f"{e} occured while updating task with id {task_id}"
         )
 
 # Delete
@@ -82,6 +95,6 @@ async def delete_task_by_task_id(task_id:int,db:Session)->bool:
         db.rollback()
         raise HTTPException(
             status_code=status_code.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"{e}"
+            detail=f"{e.args}"
         )
 
