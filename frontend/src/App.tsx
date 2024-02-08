@@ -10,7 +10,6 @@ function App() {
     <ReduxProvider store={store}>
       <QueryClientProvider client={new QueryClient()}>
         <div className="App">
-          <h1>Hello World</h1>
           <LoginPage />
         </div>
       </QueryClientProvider>
