@@ -1,13 +1,20 @@
 import React from "react";
 import "./App.css";
-import { LoginPage } from "./components/LoginComponent/LoginPage";
+import { LoginPage } from "./pages/LoginPage/LoginPage";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Provider as ReduxProvider } from "react-redux";
+import { store } from "./redux/store";
 
 function App() {
   return (
-    <div className="App">
-      <h1>Hello World</h1>
-      <LoginPage />
-    </div>
+    <ReduxProvider store={store}>
+      <QueryClientProvider client={new QueryClient()}>
+        <div className="App">
+          <h1>Hello World</h1>
+          <LoginPage />
+        </div>
+      </QueryClientProvider>
+    </ReduxProvider>
   );
 }
 
