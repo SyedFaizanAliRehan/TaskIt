@@ -16,17 +16,26 @@ import {
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import AppleIcon from "@mui/icons-material/Apple";
-import { useEffect, useReducer, useState } from "react";
+import { useReducer, useState } from "react";
 import {
   textFieldInitialState,
   textFieldReducer,
 } from "../../redux/textField/textFieldReducer";
 import {
+  text_field_in_valid,
   text_field_on_blur,
   text_field_on_change,
   text_field_on_click,
   text_field_on_focus,
 } from "../../redux/textField/textFieldAction";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/login/loginAction";
+
+const passwordPattern = new RegExp(
+  "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})"
+);
+
+const usernamePattern = new RegExp("^[a-zA-Z0-9]{3,}$");
 
 export const LoginForm = () => {
   const theme = useTheme();
@@ -40,7 +49,23 @@ export const LoginForm = () => {
   );
 
   const [rememberMe, setRememberMe] = useState(false);
-  const isLoading = false;
+  const loginDispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const onLogin = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    if (usernamePattern.test(username.text) === false) {
+      usernameDispatcher(text_field_in_valid("Invalid username"));
+    } else if (passwordPattern.test(password.text) === false) {
+      passwordDispatcher(
+        text_field_in_valid(
+          "Password must contain 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character"
+        )
+      );
+    } else {
+      setIsLoading(true);
+      loginDispatch(login("dummy"));
+    }
+  };
   return (
     <Box
       bgcolor={theme.palette.background.paper}
@@ -186,6 +211,7 @@ export const LoginForm = () => {
                 disabled={
                   username.text.trim() === "" || password.text.trim() === ""
                 }
+                onClick={(event) => onLogin(event)}
               >
                 Login
               </Button>
@@ -208,7 +234,7 @@ export const LoginForm = () => {
             OR
           </Divider>
           <Stack
-            spacing={10}
+            spacing={{ xs: 2, sm: 5, md: 10 }}
             direction={"row"}
             display={"flex"}
             justifyContent={"center"}

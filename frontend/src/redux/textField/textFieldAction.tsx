@@ -1,4 +1,5 @@
 import {
+  TEXT_FIELD_IN_VALID,
   TEXT_FIELD_ON_BLUR,
   TEXT_FIELD_ON_CHANGE,
   TEXT_FIELD_ON_CLICK,
@@ -33,9 +34,16 @@ const text_field_on_focus = (event: React.FocusEvent<HTMLInputElement>) => {
   };
 };
 
+const text_field_in_valid = (helperText = "") => {
+  return {
+    type: TEXT_FIELD_IN_VALID,
+    payload: helperText,
+  };
+};
 export {
   text_field_on_click,
   text_field_on_change,
   text_field_on_blur,
   text_field_on_focus,
+  text_field_in_valid,
 };
