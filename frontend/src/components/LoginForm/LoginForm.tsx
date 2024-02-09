@@ -16,9 +16,30 @@ import {
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import AppleIcon from "@mui/icons-material/Apple";
+import { useEffect, useReducer, useState } from "react";
+import {
+  textFieldInitialState,
+  textFieldReducer,
+} from "../../redux/textField/textFieldReducer";
+import {
+  text_field_on_blur,
+  text_field_on_change,
+  text_field_on_click,
+  text_field_on_focus,
+} from "../../redux/textField/textFieldAction";
 
 export const LoginForm = () => {
   const theme = useTheme();
+  const [username, usernameDispatcher] = useReducer(
+    textFieldReducer,
+    textFieldInitialState
+  );
+  const [password, passwordDispatcher] = useReducer(
+    textFieldReducer,
+    textFieldInitialState
+  );
+
+  const [rememberMe, setRememberMe] = useState(false);
   const isLoading = false;
   return (
     <Box
@@ -78,71 +99,111 @@ export const LoginForm = () => {
           >
             Task It
           </Typography>
-          <Stack spacing={{ xs: 1, sm: 2, md: 5 }} pl={5} pr={5}>
-            <TextField
-              id="username"
-              label="Username"
-              variant="outlined"
-              placeholder="Enter your username"
-              fullWidth
-            />
-            <TextField
-              id="password"
-              label="Password"
-              type="password"
-              variant="outlined"
-              placeholder="Enter your password"
-              fullWidth
-            />
-            <Stack
-              spacing={3}
-              display={"flex"}
-              justifyContent={"space-evenly"}
-              textAlign={"center"}
-              alignItems={"center"}
-              direction={"row"}
-            >
-              <Link
-                href="#"
-                color={theme.palette.primary.main}
-                textTransform={"uppercase"}
-                sx={{
-                  textDecoration: "none",
-                  ":hover": { fontWeight: "bold" },
-                }}
-              >
-                Forgot your password?
-              </Link>
-              <FormControlLabel
-                value="end"
-                control={<Switch />}
-                label="Remember me"
-                labelPlacement="end"
+          <form>
+            <Stack spacing={{ xs: 1, sm: 2, md: 5 }} pl={5} pr={5}>
+              <TextField
+                id="username"
+                label="Username"
+                variant="outlined"
+                placeholder="Enter your username"
+                fullWidth
+                required
+                value={username.text}
+                error={username.isError}
+                helperText={username.helperText}
+                onClick={(event: React.MouseEvent<HTMLElement>) =>
+                  usernameDispatcher(text_field_on_click(event))
+                }
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  usernameDispatcher(text_field_on_change(event))
+                }
+                onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
+                  usernameDispatcher(text_field_on_blur(event))
+                }
+                onFocus={(event: React.FocusEvent<HTMLInputElement>) =>
+                  usernameDispatcher(text_field_on_focus(event))
+                }
               />
-            </Stack>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              fullWidth
-              sx={{ textTransform: "uppercase" }}
-            >
-              Login
-            </Button>
-            <Typography variant="subtitle1" textAlign={"center"}>
-              Dont have an account?{" "}
-              <Link
-                href="#"
-                textTransform={"uppercase"}
-                sx={{
-                  textDecoration: "none",
-                  ":hover": { fontWeight: "bold" },
-                }}
+              <TextField
+                id="password"
+                label="Password"
+                type="password"
+                variant="outlined"
+                placeholder="Enter your password"
+                fullWidth
+                required
+                value={password.text}
+                error={password.isError}
+                helperText={password.helperText}
+                onClick={(event: React.MouseEvent<HTMLElement>) =>
+                  passwordDispatcher(text_field_on_click(event))
+                }
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  passwordDispatcher(text_field_on_change(event))
+                }
+                onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
+                  passwordDispatcher(text_field_on_blur(event))
+                }
+                onFocus={(event: React.FocusEvent<HTMLInputElement>) =>
+                  passwordDispatcher(text_field_on_focus(event))
+                }
+              />
+              <Stack
+                spacing={3}
+                display={"flex"}
+                justifyContent={"space-evenly"}
+                textAlign={"center"}
+                alignItems={"center"}
+                direction={"row"}
               >
-                Sign up
-              </Link>
-            </Typography>
-          </Stack>
+                <Link
+                  href="#"
+                  color={theme.palette.primary.main}
+                  textTransform={"uppercase"}
+                  sx={{
+                    textDecoration: "none",
+                    ":hover": { fontWeight: "bold" },
+                  }}
+                >
+                  Forgot your password?
+                </Link>
+                <FormControlLabel
+                  value="end"
+                  control={
+                    <Switch onClick={(event) => setRememberMe(!rememberMe)} />
+                  }
+                  label="Remember me"
+                  labelPlacement="end"
+                />
+              </Stack>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+                sx={{ textTransform: "uppercase" }}
+                type="submit"
+                disabled={
+                  username.text.trim() === "" || password.text.trim() === ""
+                }
+              >
+                Login
+              </Button>
+              <Typography variant="subtitle1" textAlign={"center"}>
+                Dont have an account?{" "}
+                <Link
+                  href="#"
+                  textTransform={"uppercase"}
+                  sx={{
+                    textDecoration: "none",
+                    ":hover": { fontWeight: "bold" },
+                  }}
+                >
+                  Sign up
+                </Link>
+              </Typography>
+            </Stack>
+          </form>
           <Divider style={{ paddingLeft: "50px", paddingRight: "50px" }}>
             OR
           </Divider>
