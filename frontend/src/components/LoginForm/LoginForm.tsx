@@ -30,6 +30,7 @@ import {
 } from "../../redux/textField/textFieldAction";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/login/loginAction";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const passwordPattern = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})"
@@ -51,6 +52,8 @@ export const LoginForm = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const loginDispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
   const onLogin = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     if (usernamePattern.test(username.text) === false) {
@@ -64,6 +67,8 @@ export const LoginForm = () => {
     } else {
       setIsLoading(true);
       loginDispatch(login("dummy"));
+      const redirectPath = location.state?.path || "/";
+      navigate(redirectPath, { replace: true });
     }
   };
   return (
