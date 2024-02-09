@@ -6,7 +6,6 @@ import { Navigate, useLocation } from "react-router-dom";
 export const RouteAuthenticate = (props: React.PropsWithChildren) => {
   const loggedStatus = useSelector(loginSelector);
   const location = useLocation();
-  console.log("Route Auth, loggedStatus: ", loggedStatus);
   if (!loggedStatus.loggedIn) {
     return (
       <Navigate

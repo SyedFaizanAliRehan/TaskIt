@@ -6,8 +6,6 @@ import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { RouteAuthenticate } from "../utils/RouteAuthenticate/RouteAuthenticate";
 
 export const AppRouter = createBrowserRouter([
-  // ...
-
   {
     path: "/",
     element: (
@@ -19,7 +17,6 @@ export const AppRouter = createBrowserRouter([
       {
         path: "/",
         element: <Dashboard />,
-        children: [{ path: "products", element: <div>Products</div> }],
       },
     ],
   },
