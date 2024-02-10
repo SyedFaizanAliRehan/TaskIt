@@ -4,7 +4,6 @@ import {
   CircularProgress,
   FormControlLabel,
   Link,
-  Skeleton,
   Stack,
   Switch,
   TextField,
@@ -12,6 +11,7 @@ import {
   useTheme,
   IconButton,
   Divider,
+  Backdrop,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -32,14 +32,13 @@ import { useDispatch } from "react-redux";
 import { login } from "../../redux/login/loginAction";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const passwordPattern = new RegExp(
-  "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})"
-);
-
-const usernamePattern = new RegExp("^[a-zA-Z0-9]{3,}$");
+// Regular expression for username and password
+const usernamePattern = /^[a-zA-Z0-9]{3,}$/;
+const passwordPattern =
+  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
 
 export const LoginForm = () => {
-  const theme = useTheme();
+  // Login form fields
   const [username, usernameDispatcher] = useReducer(
     textFieldReducer,
     textFieldInitialState
@@ -48,23 +47,33 @@ export const LoginForm = () => {
     textFieldReducer,
     textFieldInitialState
   );
-
   const [rememberMe, setRememberMe] = useState(false);
-  const loginDispatch = useDispatch();
+
   const [isLoading, setIsLoading] = useState(false);
+
+  // Misc
+  const theme = useTheme();
+  const loginDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // This funtion validates the fields in login form and logs in the user
   const onLogin = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
+    // Checking if user name is valid
     if (usernamePattern.test(username.text) === false) {
       usernameDispatcher(text_field_in_valid("Invalid username"));
-    } else if (passwordPattern.test(password.text) === false) {
+    }
+    // Checking if password is valid
+    else if (passwordPattern.test(password.text) === false) {
       passwordDispatcher(
         text_field_in_valid(
           "Password must contain 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character"
         )
       );
-    } else {
+    }
+    // If both fields are valid, then login the user
+    else {
       setIsLoading(true);
       loginDispatch(login("dummy"));
       const redirectPath = location.state?.path || "/";
@@ -72,6 +81,7 @@ export const LoginForm = () => {
     }
   };
   return (
+    // Outline of the login form
     <Box
       bgcolor={theme.palette.background.paper}
       height={"inherit"}
@@ -81,38 +91,22 @@ export const LoginForm = () => {
       justifyContent={"center"}
     >
       {isLoading ? (
-        <>
-          <Skeleton
-            variant="rectangular"
-            height={"inherit"}
-            width={"inherit"}
-            sx={{ position: "absolute" }}
-          />
-          <Box
-            height={"inherit"}
-            width={"inherit"}
-            position={"absolute"}
-            bgcolor={"transparent"}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            color={theme.palette.primary.main}
-          >
-            <Stack
-              spacing={2}
-              color={"inherit"}
-              display={"flex"}
-              textAlign={"center"}
-              alignItems={"center"}
-            >
-              <CircularProgress color="inherit" />
-              <Typography variant="subtitle1" color={"inherit"}>
-                Logging in
-              </Typography>
-            </Stack>
-          </Box>
-        </>
+        // Backdrop to show loading spinner
+        <Backdrop
+          component="div"
+          open={true}
+          sx={{
+            position: "inherit",
+            width: "inherit",
+            height: "inherit",
+            color: "#fff",
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       ) : (
+        // Login form
         <Stack
           height={"inherit"}
           width={"inherit"}
@@ -121,6 +115,7 @@ export const LoginForm = () => {
           justifyContent={"center"}
           spacing={{ xs: 2, sm: 5, md: 10 }}
         >
+          {/* Title of the login form */}
           <Typography
             variant="h2"
             color={theme.palette.primary.main}
@@ -178,6 +173,7 @@ export const LoginForm = () => {
                   passwordDispatcher(text_field_on_focus(event))
                 }
               />
+              {/* Foogot your password? and Remember me */}
               <Stack
                 spacing={3}
                 display={"flex"}
@@ -220,6 +216,7 @@ export const LoginForm = () => {
               >
                 Login
               </Button>
+              {/* Sign up */}
               <Typography variant="subtitle1" textAlign={"center"}>
                 Dont have an account?{" "}
                 <Link
@@ -238,6 +235,7 @@ export const LoginForm = () => {
           <Divider style={{ paddingLeft: "50px", paddingRight: "50px" }}>
             OR
           </Divider>
+          {/* Social media login */}
           <Stack
             spacing={{ xs: 2, sm: 5, md: 10 }}
             direction={"row"}
