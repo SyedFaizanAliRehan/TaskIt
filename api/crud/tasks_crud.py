@@ -1,5 +1,5 @@
 from database.connection import Session
-from schemes import tasks_scheme,users_scheme
+from schemes import users_scheme
 from sql import modals
 from typing import List
 from fastapi import HTTPException

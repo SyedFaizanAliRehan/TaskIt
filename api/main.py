@@ -4,7 +4,6 @@ from database.connection import Base,engine
 from routers import users_router,auth_router,tasks_router,admin_router
 from fastapi.exceptions import ResponseValidationError
 from fastapi.middleware.cors import CORSMiddleware
-import json
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI(

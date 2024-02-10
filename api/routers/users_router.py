@@ -4,8 +4,7 @@ from schemes import users_scheme
 from database.connection import get_database,Session
 from crud import users_crud
 from tags import Tags
-from typing import List
-from typing import Annotated,Any
+from typing import Annotated
 from sql import modals
 from auth.auth_schemes import credential_authentication
 from auth.token_management import get_active_user_from_header

@@ -6,7 +6,6 @@ from database.connection import get_database,Session
 from crud import users_crud
 from schemes import users_scheme,token_scheme
 from fastapi.requests import Request
-from fastapi.encoders import jsonable_encoder
 
 # Token creation
 
