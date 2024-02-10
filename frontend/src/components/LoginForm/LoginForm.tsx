@@ -15,6 +15,7 @@ import {
   Alert,
   Snackbar,
   Slide,
+  ClickAwayListener,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -305,26 +306,28 @@ export const LoginForm = () => {
         </Stack>
       </Stack>
       {/* Snackbar for showing errors */}
-      <Snackbar
-        autoHideDuration={5000}
-        open={formError.isError}
-        onClose={handleFormErrorClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        message=""
-        sx={{
-          width: "auto",
-        }}
-      >
-        <Slide direction="up" in={isError} mountOnEnter unmountOnExit>
-          <Alert
-            variant="filled"
-            severity="error"
-            sx={{ width: { xs: "100vw", sm: "80vw", md: "30vw" } }}
-          >
-            {formError.helperText}
-          </Alert>
-        </Slide>
-      </Snackbar>
+      <ClickAwayListener onClickAway={handleFormErrorClose}>
+        <Snackbar
+          autoHideDuration={5000}
+          open={formError.isError}
+          onClose={handleFormErrorClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          message=""
+          sx={{
+            width: "auto",
+          }}
+        >
+          <Slide direction="up" in={isError} mountOnEnter unmountOnExit>
+            <Alert
+              variant="filled"
+              severity="error"
+              sx={{ width: { xs: "100vw", sm: "80vw", md: "30vw" } }}
+            >
+              {formError.helperText}
+            </Alert>
+          </Slide>
+        </Snackbar>
+      </ClickAwayListener>
     </Box>
   );
 };
