@@ -14,6 +14,7 @@ import {
   Backdrop,
   Alert,
   Snackbar,
+  Slide,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -302,17 +303,26 @@ export const LoginForm = () => {
           </Stack>
         </Stack>
       )}
+
       <Snackbar
         autoHideDuration={5000}
-        open={formError.isError}
+        open={formError.isError && isLoading === false}
         onClose={handleFormErrorClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         message=""
-        sx={{ width: "50%" }}
+        sx={{
+          width: "auto",
+        }}
       >
-        <Alert variant="filled" severity="error" sx={{ width: "inherit" }}>
-          {formError.helperText}
-        </Alert>
+        <Slide direction="up" in={isError} mountOnEnter unmountOnExit>
+          <Alert
+            variant="filled"
+            severity="error"
+            sx={{ width: { xs: "100vw", sm: "80vw", md: "30vw" } }}
+          >
+            {formError.helperText}
+          </Alert>
+        </Slide>
       </Snackbar>
     </Box>
   );
