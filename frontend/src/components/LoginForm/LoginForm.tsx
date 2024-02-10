@@ -64,7 +64,6 @@ export const LoginForm = () => {
     if (reason === "clickaway") {
       return;
     }
-
     setFormError({ isError: false, helperText: "" });
   };
 
@@ -151,6 +150,8 @@ export const LoginForm = () => {
           color: "#fff",
           zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
+        mountOnEnter
+        unmountOnExit
       >
         <CircularProgress color="inherit" />
       </Backdrop>
@@ -161,7 +162,7 @@ export const LoginForm = () => {
         direction={"column"}
         textAlign={"center"}
         justifyContent={"center"}
-        spacing={{ xs: 2, sm: 5, md: 10 }}
+        spacing={{ xs: 2, sm: 2, md: 2.5, lg: 10 }}
       >
         {/* Title of the login form */}
         <Typography
@@ -258,7 +259,9 @@ export const LoginForm = () => {
               sx={{ textTransform: "uppercase" }}
               type="submit"
               disabled={
-                username.text.trim() === "" || password.text.trim() === ""
+                username.text.trim() === "" ||
+                password.text.trim() === "" ||
+                formError.isError
               }
               onClick={(event) => onLogin(event)}
             >
@@ -304,7 +307,7 @@ export const LoginForm = () => {
       {/* Snackbar for showing errors */}
       <Snackbar
         autoHideDuration={5000}
-        open={formError.isError && isLoading === false}
+        open={formError.isError}
         onClose={handleFormErrorClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         message=""
