@@ -12,11 +12,13 @@ import {
   IconButton,
   Divider,
   Backdrop,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import AppleIcon from "@mui/icons-material/Apple";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import {
   textFieldInitialState,
   textFieldReducer,
@@ -31,6 +33,8 @@ import {
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/login/loginAction";
 import { useLocation, useNavigate } from "react-router-dom";
+import { LoginAPI } from "../../api/auth/LoginAPI";
+import { useMutation } from "react-query";
 
 // Regular expression for username and password
 const usernamePattern = /^[a-zA-Z0-9]{3,}$/;
@@ -48,14 +52,58 @@ export const LoginForm = () => {
     textFieldInitialState
   );
   const [rememberMe, setRememberMe] = useState(false);
+  const [formError, setFormError] = useState({
+    isError: false,
+    helperText: "",
+  });
+  const handleFormErrorClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
 
-  const [isLoading, setIsLoading] = useState(false);
+    setFormError({ isError: false, helperText: "" });
+  };
 
   // Misc
   const theme = useTheme();
   const loginDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const {
+    mutate,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+    data: loginData,
+  } = useMutation({
+    mutationFn: LoginAPI,
+    onError: (error: any) => {
+      return error;
+    },
+  });
+
+  // Handling the response from the server
+  useEffect(() => {
+    if (isSuccess === true) {
+      loginDispatch(login("dummy"));
+      const redirectPath = location.state?.path || "/";
+      navigate(redirectPath, { replace: true });
+    } else if (isError === true) {
+      setFormError({ isError: true, helperText: error.response?.data.detail });
+    }
+  }, [
+    isSuccess,
+    loginData,
+    loginDispatch,
+    navigate,
+    location.state?.path,
+    isError,
+    error,
+  ]);
 
   // This funtion validates the fields in login form and logs in the user
   const onLogin = (event: React.MouseEvent<HTMLElement>) => {
@@ -72,12 +120,12 @@ export const LoginForm = () => {
         )
       );
     }
-    // If both fields are valid, then login the user
+    // If both fields are valid, then post the data to the server
     else {
-      setIsLoading(true);
-      loginDispatch(login("dummy"));
-      const redirectPath = location.state?.path || "/";
-      navigate(redirectPath, { replace: true });
+      mutate({
+        username: username.text,
+        password: password.text,
+      });
     }
   };
   return (
@@ -254,6 +302,18 @@ export const LoginForm = () => {
           </Stack>
         </Stack>
       )}
+      <Snackbar
+        autoHideDuration={5000}
+        open={formError.isError}
+        onClose={handleFormErrorClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        message=""
+        sx={{ width: "50%" }}
+      >
+        <Alert variant="filled" severity="error" sx={{ width: "inherit" }}>
+          {formError.helperText}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
