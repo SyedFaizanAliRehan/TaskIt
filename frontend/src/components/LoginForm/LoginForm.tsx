@@ -139,171 +139,169 @@ export const LoginForm = () => {
       display={"flex"}
       justifyContent={"center"}
     >
-      {isLoading ? (
-        // Backdrop to show loading spinner
-        <Backdrop
-          component="div"
-          open={true}
-          sx={{
-            position: "inherit",
-            width: "inherit",
-            height: "inherit",
-            color: "#fff",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-          }}
+      {/* Backdrop to show loading spinner */}
+      <Backdrop
+        component="div"
+        open={isLoading}
+        sx={{
+          position: "absolute",
+          left: { xs: "0", sm: "0", md: "25vw" },
+          width: "inherit",
+          height: "inherit",
+          color: "#fff",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      {/* Login form */}
+      <Stack
+        height={"inherit"}
+        width={"inherit"}
+        direction={"column"}
+        textAlign={"center"}
+        justifyContent={"center"}
+        spacing={{ xs: 2, sm: 5, md: 10 }}
+      >
+        {/* Title of the login form */}
+        <Typography
+          variant="h2"
+          color={theme.palette.primary.main}
+          textTransform={"uppercase"}
+          fontWeight={"bold"}
         >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      ) : (
-        // Login form
-        <Stack
-          height={"inherit"}
-          width={"inherit"}
-          direction={"column"}
-          textAlign={"center"}
-          justifyContent={"center"}
-          spacing={{ xs: 2, sm: 5, md: 10 }}
-        >
-          {/* Title of the login form */}
-          <Typography
-            variant="h2"
-            color={theme.palette.primary.main}
-            textTransform={"uppercase"}
-            fontWeight={"bold"}
-          >
-            Task It
-          </Typography>
-          <form>
-            <Stack spacing={{ xs: 1, sm: 2, md: 5 }} pl={5} pr={5}>
-              <TextField
-                id="username"
-                label="Username"
-                variant="outlined"
-                placeholder="Enter your username"
-                fullWidth
-                required
-                value={username.text}
-                error={username.isError}
-                helperText={username.helperText}
-                onClick={(event: React.MouseEvent<HTMLElement>) =>
-                  usernameDispatcher(text_field_on_click(event))
-                }
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  usernameDispatcher(text_field_on_change(event))
-                }
-                onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
-                  usernameDispatcher(text_field_on_blur(event))
-                }
-                onFocus={(event: React.FocusEvent<HTMLInputElement>) =>
-                  usernameDispatcher(text_field_on_focus(event))
-                }
-              />
-              <TextField
-                id="password"
-                label="Password"
-                type="password"
-                variant="outlined"
-                placeholder="Enter your password"
-                fullWidth
-                required
-                value={password.text}
-                error={password.isError}
-                helperText={password.helperText}
-                onClick={(event: React.MouseEvent<HTMLElement>) =>
-                  passwordDispatcher(text_field_on_click(event))
-                }
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  passwordDispatcher(text_field_on_change(event))
-                }
-                onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
-                  passwordDispatcher(text_field_on_blur(event))
-                }
-                onFocus={(event: React.FocusEvent<HTMLInputElement>) =>
-                  passwordDispatcher(text_field_on_focus(event))
-                }
-              />
-              {/* Foogot your password? and Remember me */}
-              <Stack
-                spacing={3}
-                display={"flex"}
-                justifyContent={"space-evenly"}
-                textAlign={"center"}
-                alignItems={"center"}
-                direction={"row"}
+          Task It
+        </Typography>
+        <form>
+          <Stack spacing={{ xs: 1, sm: 2, md: 5 }} pl={5} pr={5}>
+            <TextField
+              id="username"
+              label="Username"
+              variant="outlined"
+              placeholder="Enter your username"
+              fullWidth
+              required
+              value={username.text}
+              error={username.isError}
+              helperText={username.helperText}
+              onClick={(event: React.MouseEvent<HTMLElement>) =>
+                usernameDispatcher(text_field_on_click(event))
+              }
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                usernameDispatcher(text_field_on_change(event))
+              }
+              onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
+                usernameDispatcher(text_field_on_blur(event))
+              }
+              onFocus={(event: React.FocusEvent<HTMLInputElement>) =>
+                usernameDispatcher(text_field_on_focus(event))
+              }
+            />
+            <TextField
+              id="password"
+              label="Password"
+              type="password"
+              variant="outlined"
+              placeholder="Enter your password"
+              fullWidth
+              required
+              value={password.text}
+              error={password.isError}
+              helperText={password.helperText}
+              onClick={(event: React.MouseEvent<HTMLElement>) =>
+                passwordDispatcher(text_field_on_click(event))
+              }
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                passwordDispatcher(text_field_on_change(event))
+              }
+              onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
+                passwordDispatcher(text_field_on_blur(event))
+              }
+              onFocus={(event: React.FocusEvent<HTMLInputElement>) =>
+                passwordDispatcher(text_field_on_focus(event))
+              }
+            />
+            {/* Foogot your password? and Remember me */}
+            <Stack
+              spacing={3}
+              display={"flex"}
+              justifyContent={"space-evenly"}
+              textAlign={"center"}
+              alignItems={"center"}
+              direction={"row"}
+            >
+              <Link
+                href="#"
+                color={theme.palette.primary.main}
+                textTransform={"uppercase"}
+                sx={{
+                  textDecoration: "none",
+                  ":hover": { fontWeight: "bold" },
+                }}
               >
-                <Link
-                  href="#"
-                  color={theme.palette.primary.main}
-                  textTransform={"uppercase"}
-                  sx={{
-                    textDecoration: "none",
-                    ":hover": { fontWeight: "bold" },
-                  }}
-                >
-                  Forgot your password?
-                </Link>
-                <FormControlLabel
-                  value="end"
-                  control={
-                    <Switch onClick={(event) => setRememberMe(!rememberMe)} />
-                  }
-                  label="Remember me"
-                  labelPlacement="end"
-                />
-              </Stack>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                fullWidth
-                sx={{ textTransform: "uppercase" }}
-                type="submit"
-                disabled={
-                  username.text.trim() === "" || password.text.trim() === ""
+                Forgot your password?
+              </Link>
+              <FormControlLabel
+                value="end"
+                control={
+                  <Switch onClick={(event) => setRememberMe(!rememberMe)} />
                 }
-                onClick={(event) => onLogin(event)}
-              >
-                Login
-              </Button>
-              {/* Sign up */}
-              <Typography variant="subtitle1" textAlign={"center"}>
-                Dont have an account?{" "}
-                <Link
-                  href="#"
-                  textTransform={"uppercase"}
-                  sx={{
-                    textDecoration: "none",
-                    ":hover": { fontWeight: "bold" },
-                  }}
-                >
-                  Sign up
-                </Link>
-              </Typography>
+                label="Remember me"
+                labelPlacement="end"
+              />
             </Stack>
-          </form>
-          <Divider style={{ paddingLeft: "50px", paddingRight: "50px" }}>
-            OR
-          </Divider>
-          {/* Social media login */}
-          <Stack
-            spacing={{ xs: 2, sm: 5, md: 10 }}
-            direction={"row"}
-            display={"flex"}
-            justifyContent={"center"}
-          >
-            <IconButton color="primary">
-              <GoogleIcon fontSize="large" />
-            </IconButton>
-            <IconButton color="primary">
-              <FacebookIcon fontSize="large" />
-            </IconButton>
-            <IconButton color="primary">
-              <AppleIcon fontSize="large" />
-            </IconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              fullWidth
+              sx={{ textTransform: "uppercase" }}
+              type="submit"
+              disabled={
+                username.text.trim() === "" || password.text.trim() === ""
+              }
+              onClick={(event) => onLogin(event)}
+            >
+              Login
+            </Button>
+            {/* Sign up */}
+            <Typography variant="subtitle1" textAlign={"center"}>
+              Dont have an account?{" "}
+              <Link
+                href="#"
+                textTransform={"uppercase"}
+                sx={{
+                  textDecoration: "none",
+                  ":hover": { fontWeight: "bold" },
+                }}
+              >
+                Sign up
+              </Link>
+            </Typography>
           </Stack>
+        </form>
+        <Divider style={{ paddingLeft: "50px", paddingRight: "50px" }}>
+          OR
+        </Divider>
+        {/* Social media login */}
+        <Stack
+          spacing={{ xs: 2, sm: 5, md: 10 }}
+          direction={"row"}
+          display={"flex"}
+          justifyContent={"center"}
+        >
+          <IconButton color="primary">
+            <GoogleIcon fontSize="large" />
+          </IconButton>
+          <IconButton color="primary">
+            <FacebookIcon fontSize="large" />
+          </IconButton>
+          <IconButton color="primary">
+            <AppleIcon fontSize="large" />
+          </IconButton>
         </Stack>
-      )}
-
+      </Stack>
+      {/* Snackbar for showing errors */}
       <Snackbar
         autoHideDuration={5000}
         open={formError.isError && isLoading === false}
