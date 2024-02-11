@@ -94,7 +94,16 @@ export const LoginForm = () => {
       const redirectPath = location.state?.path || "/";
       navigate(redirectPath, { replace: true });
     } else if (isError === true) {
-      setFormError({ isError: true, helperText: error.response?.data.detail });
+      if (error.response)
+        setFormError({
+          isError: true,
+          helperText: error.response?.data.detail,
+        });
+      else
+        setFormError({
+          isError: true,
+          helperText: "Unable to connect to login. Please try again later.",
+        });
     }
   }, [
     isSuccess,
