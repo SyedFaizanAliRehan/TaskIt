@@ -13,13 +13,13 @@ import { DrawerItem } from "./DrawerItem";
 
 export const drawerOpenWidth = {
   xs: "80vw",
-  sm: "40vw",
-  md: "30vw",
+  sm: "30vw",
+  md: "15vw",
 };
 export const drawerCloseWidth = {
-  xs: "15vw",
-  sm: "12.5vw",
-  md: "8vw",
+  xs: "16vw",
+  sm: "8vw",
+  md: "5vw",
 };
 
 const drawerOpenStyle = (theme: Theme): CSSObject => {
