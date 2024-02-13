@@ -56,6 +56,7 @@ const drawerClosedStyle = (theme: Theme): CSSObject => {
     "& .MuiDrawer-paper": {
       width: "inherit",
       boxSizing: "border-box",
+      overflow: "hidden",
     },
   };
 };
