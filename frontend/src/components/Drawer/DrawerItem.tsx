@@ -9,13 +9,7 @@ import {
   Theme,
   Tooltip,
 } from "@mui/material";
-
-interface DrawerItemProps extends React.PropsWithChildren<{}> {
-  handleDrawer?: () => void;
-  drawerOpen: boolean;
-  icon: React.ReactNode;
-  text: string;
-}
+import { useNavigate } from "react-router-dom";
 
 const listItemButtonStyle = (theme: Theme): CSSObject => {
   return {
@@ -27,10 +21,24 @@ const listItemButtonStyle = (theme: Theme): CSSObject => {
   };
 };
 
+interface DrawerItemProps extends React.PropsWithChildren<{}> {
+  drawerOpen: boolean;
+  icon: React.ReactNode;
+  text: string;
+  navigateTo: string;
+}
+
 export const DrawerItem = (props: DrawerItemProps) => {
+  const navigate = useNavigate();
+
   return (
     <>
-      <ListItemButton onClick={props.handleDrawer} sx={listItemButtonStyle}>
+      <ListItemButton
+        onClick={() => {
+          navigate(props.navigateTo);
+        }}
+        sx={listItemButtonStyle}
+      >
         <Tooltip title={!props.drawerOpen && props.text} placement="right">
           <ListItemIcon
             sx={{ justifyContent: props.drawerOpen ? "left" : "center" }}

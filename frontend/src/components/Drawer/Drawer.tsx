@@ -74,20 +74,19 @@ export const Drawer = (props: DrawerProps) => {
           drawerOpen={props.drawerOpen}
           icon={<AdminPanelSettingsIcon />}
           text="Admin Panel"
+          navigateTo="/"
         />
-      </List>
-      <List component="nav">
         <DrawerItem
           drawerOpen={props.drawerOpen}
           icon={<TaskIcon />}
           text="Tasks"
+          navigateTo="/tasks"
         />
-      </List>
-      <List component="nav">
         <DrawerItem
           drawerOpen={props.drawerOpen}
           icon={<LogoutIcon />}
           text="Logout"
+          navigateTo="/"
         />
       </List>
     </MuiDrawer>

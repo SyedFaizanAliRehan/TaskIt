@@ -17,6 +17,12 @@ export const AppRouter = createBrowserRouter([
       {
         path: "/",
         element: <Dashboard />,
+        children: [
+          {
+            path: "/tasks",
+            element: <h1>Task Page</h1>,
+          },
+        ],
       },
     ],
   },
