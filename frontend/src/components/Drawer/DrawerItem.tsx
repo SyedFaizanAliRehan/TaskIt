@@ -13,10 +13,6 @@ import { useNavigate } from "react-router-dom";
 
 const listItemButtonStyle = (theme: Theme): CSSObject => {
   return {
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "center",
-    alignSelf: "center",
     height: "5vh",
   };
 };
@@ -41,7 +37,7 @@ export const DrawerItem = (props: DrawerItemProps) => {
       >
         <Tooltip title={!props.drawerOpen && props.text} placement="right">
           <ListItemIcon
-            sx={{ justifyContent: props.drawerOpen ? "left" : "center" }}
+            sx={{ justifyContent: props.drawerOpen ? "" : "center" }}
           >
             {props.icon}
           </ListItemIcon>
