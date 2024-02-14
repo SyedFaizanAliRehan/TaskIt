@@ -4,39 +4,41 @@ import {
   AppBar as MuiAppbar,
   Theme,
   CSSObject,
+  IconButton,
+  Stack,
 } from "@mui/material";
-import { drawerCloseWidth } from "../Drawer/Drawer";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const AppBarStyle = (theme: Theme): CSSObject => {
   return {
-    [theme.breakpoints.up("md")]: {
-      width: `calc(100% - ${drawerCloseWidth.md})`,
-      ml: drawerCloseWidth.md,
-    },
-    [theme.breakpoints.only("sm")]: {
-      width: `calc(100% - ${drawerCloseWidth.sm})`,
-      ml: drawerCloseWidth.sm,
-    },
-    [theme.breakpoints.down("sm")]: {
-      width: `calc(100% - ${drawerCloseWidth.xs})`,
-      ml: drawerCloseWidth.xs,
-    },
-    display: "flex",
-    flexDirection: "column",
+    width: "100%",
+    height: "6vh",
     justifyContent: "center",
     alignItems: "flex-start",
     alignContent: "center",
-    height: "6vh",
     pl: 2,
+    zIndex: theme.zIndex.drawer + 3,
+    color: theme.palette.primary.contrastText,
   };
 };
 
-export const Appbar = () => {
+interface AppbarProps
+  extends React.PropsWithoutRef<JSX.IntrinsicElements["div"]> {
+  handleDrawer: () => void;
+}
+
+export const Appbar = (props: AppbarProps) => {
   return (
     <MuiAppbar position="relative" sx={AppBarStyle}>
-      <Typography variant="h6" textTransform={"uppercase"}>
-        Task It{" "}
-      </Typography>
+      <Stack direction="row" spacing={2} alignItems={"center"}>
+        <IconButton onClick={props.handleDrawer} color="inherit">
+          <MenuIcon />
+        </IconButton>
+
+        <Typography variant="h6" textTransform={"uppercase"}>
+          Task It{" "}
+        </Typography>
+      </Stack>
     </MuiAppbar>
   );
 };

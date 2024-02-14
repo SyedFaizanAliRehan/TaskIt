@@ -1,14 +1,8 @@
-import React, { useState } from "react";
-import {
-  CSSObject,
-  Divider,
-  List,
-  Drawer as MuiDrawer,
-  Theme,
-} from "@mui/material";
-
-import MenuIcon from "@mui/icons-material/Menu";
+import React from "react";
+import { CSSObject, List, Drawer as MuiDrawer, Theme } from "@mui/material";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import TaskIcon from "@mui/icons-material/Task";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { DrawerItem } from "./DrawerItem";
 
 export const drawerOpenWidth = {
@@ -37,6 +31,7 @@ const drawerOpenStyle = (theme: Theme): CSSObject => {
     "& .MuiDrawer-paper": {
       width: "inherit",
       boxSizing: "border-box",
+      mt: "6.5vh",
     },
   };
 };
@@ -57,33 +52,42 @@ const drawerClosedStyle = (theme: Theme): CSSObject => {
       width: "inherit",
       boxSizing: "border-box",
       overflow: "hidden",
+      mt: "6.5vh",
     },
   };
 };
 
-export const Drawer = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const handleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
-  };
+interface DrawerProps
+  extends React.PropsWithoutRef<JSX.IntrinsicElements["div"]> {
+  drawerOpen: boolean;
+}
+
+export const Drawer = (props: DrawerProps) => {
   return (
     <MuiDrawer
       variant="permanent"
       component="div"
-      sx={drawerOpen ? drawerOpenStyle : drawerClosedStyle}
+      sx={props.drawerOpen ? drawerOpenStyle : drawerClosedStyle}
     >
       <List component="nav">
         <DrawerItem
-          handleDrawer={handleDrawer}
-          drawerOpen={drawerOpen}
-          icon={<MenuIcon />}
-          text="Task It"
-        />
-        <Divider />
-        <DrawerItem
-          drawerOpen={drawerOpen}
+          drawerOpen={props.drawerOpen}
           icon={<AdminPanelSettingsIcon />}
           text="Admin Panel"
+        />
+      </List>
+      <List component="nav">
+        <DrawerItem
+          drawerOpen={props.drawerOpen}
+          icon={<TaskIcon />}
+          text="Tasks"
+        />
+      </List>
+      <List component="nav">
+        <DrawerItem
+          drawerOpen={props.drawerOpen}
+          icon={<LogoutIcon />}
+          text="Logout"
         />
       </List>
     </MuiDrawer>
