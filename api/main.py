@@ -1,11 +1,40 @@
 from fastapi import FastAPI,Request,Cookie
 from fastapi.responses import RedirectResponse,JSONResponse
-from database.connection import Base,engine
+from database.connection import Base,engine,SessionLocal
 from routers import users_router,auth_router,tasks_router,admin_router
 from fastapi.exceptions import ResponseValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from sql import modals
+from auth.password_management import password_context
+import os
 
+def delete_database():
+    if os.path.exists("./TaskItDatabase.db"):
+        os.remove("./TaskItDatabase.db")
+
+def create_admin():
+    db = db = SessionLocal()
+    admin = modals.User(
+            user_name = "admin",
+            first_name = "admin",
+            last_name = "admin",
+            role = modals.User.UserRoles.admin,
+            email = "admin@taskit.com",
+            password = password_context.hash("Password@123")
+            )
+    db.add(admin)
+    db.commit()
+    db.close()
+    
+# Delete old database
+delete_database()
+
+# Create new database
 Base.metadata.create_all(bind=engine)
+
+# Create admin user
+create_admin()
+
 app = FastAPI(
     title="TaskAPI",
     version="1.0.0",
