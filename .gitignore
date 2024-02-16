@@ -169,3 +169,4 @@ yarn-error.log*
 
 # Sqlite
 *.db
+api/TaskItDatabase.db
