@@ -168,4 +168,4 @@ yarn-error.log*
 .npm/
 
 # Sqlite
-TaskItDatabase.db
+api\TaskItDatabase.db
