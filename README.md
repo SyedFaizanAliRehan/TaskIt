@@ -52,4 +52,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 If you have any questions or need further assistance, feel free to contact us at syedfaizanalirehan@gmail.com
 
-Thank you for using our Task Manager software! We hope it helps you stay organized and productive.
+Thank you for using Task It! We hope it helps you stay organized and productive.
