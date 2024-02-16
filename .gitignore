@@ -167,3 +167,5 @@ yarn-error.log*
 /.changelog
 .npm/
 
+# Sqlite
+*.db
