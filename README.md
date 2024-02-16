@@ -7,7 +7,6 @@ Welcome to our Tast It! This README file provides an overview of the application
 Our Task Manager software is designed to help users organize and manage their tasks efficiently. It consists of a FastAPI backend serving as an API with authentication and token management, and a React frontend for the user interface. Here are the key components:
 
 - **FastAPI Backend**: The backend is built using FastAPI, a modern, fast (high-performance) web framework for building APIs with Python 3.7+. It provides endpoints for task management, user authentication, and token management.
-  
 - **React Frontend**: The frontend is developed using React, a popular JavaScript library for building user interfaces. We've utilized Material-UI for styling, Redux for state management, Axios for making HTTP requests, and React Query for managing data fetching and caching.
 
 ## Features
@@ -27,8 +26,15 @@ Follow these steps to set up the Task Manager software:
 
 1. Clone this repository to your local machine.
 2. Navigate to the `backend` directory.
-3. Install dependencies: `pip install -r requirements.txt`.
-4. Run the FastAPI server: `uvicorn main:app --reload`.
+3. Create a virtual environment: `python -m venv venv`.
+4. Activate the virtual environment:
+   On Windows: `venv\Scripts\activate`
+   On macOS and Linux: `source venv/bin/activate`
+5. Install dependencies: `pip install -r requirements.txt`.
+6. Set up environment variables:
+   Create a .env file based on the provided .env.example.
+   Update the variables with your configuration (e.g., database connection details, secret keys).
+7. Run the FastAPI server: `uvicorn main:app --reload`.
 
 ### Frontend Setup
 
