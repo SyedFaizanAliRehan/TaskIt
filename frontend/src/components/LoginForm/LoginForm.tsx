@@ -281,7 +281,7 @@ export const LoginForm = () => {
             <Typography variant="subtitle1" textAlign={"center"}>
               Dont have an account?{" "}
               <Link
-                href="#"
+                href="/signUp"
                 textTransform={"uppercase"}
                 sx={{
                   textDecoration: "none",
