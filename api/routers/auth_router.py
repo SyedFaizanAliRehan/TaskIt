@@ -50,11 +50,12 @@ async def reset_token(refresh_token:Annotated[str,Header(...,alias="refresh-toke
     return response
 
 @router.post('/signup',response_model=users_scheme.User,status_code=status.HTTP_201_CREATED)
-async def sign_up(user_name:Annotated[str,Form()],
+async def sign_up(
                   first_name:Annotated[str,Form()],
                   last_name:Annotated[str,Form()],
-                  password:Annotated[str,Form()],
+                  user_name:Annotated[str,Form()],
                   email:Annotated[str,Form()],
+                  password:Annotated[str,Form()],
                   db:Session=Depends(get_database)):
     return jsonable_encoder(await users_crud.sign_up(user_name,email,first_name,last_name,password,db))
 

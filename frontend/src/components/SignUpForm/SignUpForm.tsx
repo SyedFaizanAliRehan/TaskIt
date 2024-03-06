@@ -31,9 +31,13 @@ import {
   verifyPasswordPattern,
   verifyUsernamePattern,
 } from "../../utils/RegularExpressions/RegularExpressions";
+import { useMutation } from "react-query";
+import { SignUpAPI } from "../../api/auth/SignUpAPI";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/login/loginAction";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const SignUpForm = () => {
-  const theme = useTheme();
   const [firstName, firstNameReducer] = useReducer(
     textFieldReducer,
     textFieldInitialState
@@ -72,9 +76,50 @@ export const SignUpForm = () => {
     }
   };
 
+  // Misc
+  const theme = useTheme();
+  const loginDispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {
+    mutate: SignUpMutate,
+    isSuccess,
+    isLoading,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: SignUpAPI,
+    onError: (error: any) => {
+      return error;
+    },
+  });
+
   useEffect(() => {
-    console.log("Form Valid", formValid);
-  }, [formValid]);
+    if (isSuccess === true) {
+      loginDispatch(login("dummy"));
+      const redirectPath = location.state?.path || "/";
+      navigate(redirectPath, { replace: true });
+    } else if (isError === true) {
+      if (error.response)
+        setFormValid({
+          isError: true,
+          helperText: error.response?.data.detail,
+        });
+      else
+        setFormValid({
+          isError: true,
+          helperText: "Unable to login. Please try again later.",
+        });
+    }
+  }, [
+    isSuccess,
+    isError,
+    error,
+    setFormValid,
+    loginDispatch,
+    navigate,
+    location,
+  ]);
 
   // singup form validation
   const onFromSubmit = (event: React.MouseEvent<HTMLElement>) => {
@@ -99,9 +144,12 @@ export const SignUpForm = () => {
     else if (password.text !== confirmPassword.text) {
       confirmPasswordReducer(text_field_in_valid("Passwords do not match"));
     } else {
-      setFormValid({
-        isError: true,
-        helperText: "Form test",
+      SignUpMutate({
+        first_name: firstName.text,
+        last_name: lastName.text,
+        user_name: username.text,
+        email: email.text,
+        password: password.text,
       });
     }
   };
@@ -118,7 +166,7 @@ export const SignUpForm = () => {
       {/* Backdrop to show loading spinner */}
       <Backdrop
         component="div"
-        open={false}
+        open={isLoading}
         sx={{
           position: "absolute",
           left: { xs: "0", sm: "0", md: "25vw" },
