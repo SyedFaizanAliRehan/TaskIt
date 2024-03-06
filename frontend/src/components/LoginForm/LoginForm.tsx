@@ -37,11 +37,10 @@ import { login } from "../../redux/login/loginAction";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LoginAPI } from "../../api/auth/LoginAPI";
 import { useMutation } from "react-query";
-
-// Regular expression for username and password
-const usernamePattern = /^[a-zA-Z0-9]{3,}$/;
-const passwordPattern =
-  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
+import {
+  verifyPasswordPattern,
+  verifyUsernamePattern,
+} from "../../utils/RegularExpressions/RegularExpressions";
 
 export const LoginForm = () => {
   // Login form fields
@@ -63,9 +62,9 @@ export const LoginForm = () => {
     reason?: string
   ) => {
     if (reason === "clickaway") {
+      setFormError({ isError: false, helperText: "" });
       return;
     }
-    setFormError({ isError: false, helperText: "" });
   };
 
   // Misc
@@ -102,7 +101,7 @@ export const LoginForm = () => {
       else
         setFormError({
           isError: true,
-          helperText: "Unable to connect to login. Please try again later.",
+          helperText: "Unable to login. Please try again later.",
         });
     }
   }, [
@@ -119,11 +118,11 @@ export const LoginForm = () => {
   const onLogin = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     // Checking if user name is valid
-    if (usernamePattern.test(username.text) === false) {
+    if (verifyUsernamePattern(username.text) === false) {
       usernameDispatcher(text_field_in_valid("Invalid username"));
     }
     // Checking if password is valid
-    else if (passwordPattern.test(password.text) === false) {
+    else if (verifyPasswordPattern(password.text) === false) {
       passwordDispatcher(
         text_field_in_valid(
           "Password must contain 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character"
@@ -281,7 +280,7 @@ export const LoginForm = () => {
             <Typography variant="subtitle1" textAlign={"center"}>
               Dont have an account?{" "}
               <Link
-                href="#"
+                href="/signUp"
                 textTransform={"uppercase"}
                 sx={{
                   textDecoration: "none",
@@ -319,14 +318,21 @@ export const LoginForm = () => {
         <Snackbar
           autoHideDuration={5000}
           open={formError.isError}
-          onClose={handleFormErrorClose}
+          onClose={() => {
+            setFormError({ isError: false, helperText: "" });
+          }}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           message=""
           sx={{
             width: "auto",
           }}
         >
-          <Slide direction="up" in={isError} mountOnEnter unmountOnExit>
+          <Slide
+            direction="up"
+            in={formError.isError}
+            mountOnEnter
+            unmountOnExit
+          >
             <Alert
               variant="filled"
               severity="error"
